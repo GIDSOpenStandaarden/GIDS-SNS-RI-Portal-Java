@@ -15,21 +15,21 @@ import java.security.NoSuchAlgorithmException;
  *
  */
 @Configuration
-@ConfigurationProperties(prefix = "jwt")
-public class JwtConfiguration {
+@ConfigurationProperties(prefix = "hti")
+public class HtiConfiguration {
 	public String publicKey;
 	public String privateKey;
 	public String issuer;
-	static final Log LOG = LogFactory.getLog(JwtConfiguration.class);
+	static final Log LOG = LogFactory.getLog(HtiConfiguration.class);
 
 	@PostConstruct
 	public void init() throws NoSuchAlgorithmException {
 		if (StringUtils.isEmpty(publicKey) || StringUtils.isEmpty(privateKey)) {
-			LOG.info("Public and/or private key not found, generating a new pair");
+			LOG.info("HTI public and/or private key not found, generating a new pair");
 			KeyPair keyPair = KeyUtils.generateKeyPair();
 			publicKey = KeyUtils.encodeKey(keyPair.getPublic());
 			privateKey = KeyUtils.encodeKey(keyPair.getPrivate());
-			LOG.info(String.format("Generated keypair, public key is:\n%s", KeyUtils.encodeKeyPem(keyPair.getPublic(), "PUBLIC")));
+			LOG.info(String.format("Generated HTI keypair, public key is:\n%s", KeyUtils.encodeKeyPem(keyPair.getPublic(), "PUBLIC")));
 		}
 	}
 

@@ -1,7 +1,7 @@
 package nl.gidsopenstandaarden.ri.portal.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.gidsopenstandaarden.ri.portal.configuration.JwtConfiguration;
+import nl.gidsopenstandaarden.ri.portal.configuration.HtiConfiguration;
 import nl.gidsopenstandaarden.ri.portal.entities.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.entities.Treatment;
 import nl.gidsopenstandaarden.ri.portal.service.PortalUserService;
@@ -55,7 +55,7 @@ public class TreatmentControllerTest {
 	@Autowired
 	TreatmentService treatmentService;
 	@Autowired
-	JwtConfiguration jwtConfiguration;
+	HtiConfiguration htiConfiguration;
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -109,9 +109,9 @@ public class TreatmentControllerTest {
 		String token = xpath.evaluate("//form/input[@name='token']/@value", document);
 
 		JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-				.setExpectedIssuer(jwtConfiguration.getIssuer())
+				.setExpectedIssuer(htiConfiguration.getIssuer())
 				.setExpectedAudience(treatment.getAud())
-				.setVerificationKey(KeyUtils.getRsaPublicKey(jwtConfiguration.getPublicKey()))
+				.setVerificationKey(KeyUtils.getRsaPublicKey(htiConfiguration.getPublicKey()))
 				.build();
 		JwtClaims jwtClaims = jwtConsumer.processToClaims(token);
 		;

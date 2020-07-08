@@ -1,7 +1,7 @@
 package nl.gidsopenstandaarden.ri.portal.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.gidsopenstandaarden.ri.portal.configuration.JwtConfiguration;
+import nl.gidsopenstandaarden.ri.portal.configuration.HtiConfiguration;
 import nl.gidsopenstandaarden.ri.portal.entities.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.entities.Task;
 import nl.gidsopenstandaarden.ri.portal.entities.Treatment;
@@ -28,13 +28,13 @@ import java.util.UUID;
 @Service
 public class HtiLaunchService {
 
-	private JwtConfiguration jwtConfiguration;
+	private HtiConfiguration htiConfiguration;
 	private ObjectMapper objectMapper;
 	private TaskRepository taskRepository;
 
 	@Autowired
-	public void setJwtConfiguration(JwtConfiguration jwtConfiguration) {
-		this.jwtConfiguration = jwtConfiguration;
+	public void setHtiConfiguration(HtiConfiguration htiConfiguration) {
+		this.htiConfiguration = htiConfiguration;
 	}
 
 	@Autowired
@@ -62,7 +62,8 @@ public class HtiLaunchService {
 			return optional.get();
 		} else {
 			Task task = new Task();
-			task.setResourceType("Task");
+			task.setStatus("request");
+			task.setIntent("plan");
 			task.setIdentifier(UUID.randomUUID().toString());
 			task.setDefinitionReference(treatmentReference);
 			task.setForUser(userReference);
@@ -76,14 +77,14 @@ public class HtiLaunchService {
 			JsonWebSignature jws = new JsonWebSignature();
 			JwtClaims claims = new JwtClaims();
 			claims.setAudience(treatment.getAud());
-			claims.setIssuer(jwtConfiguration.getIssuer());
+			claims.setIssuer(htiConfiguration.getIssuer());
 			claims.setIssuedAtToNow();
 			claims.setGeneratedJwtId();
 			claims.setExpirationTimeMinutesInTheFuture(5);
 			claims.setClaim("task", toMap(toDto(buildTask(treatment, portalUser))));
 			jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA512);
 			jws.setPayload(claims.toJson());
-			jws.setKey(KeyUtils.getRsaPrivateKey(jwtConfiguration.getPrivateKey()));
+			jws.setKey(KeyUtils.getRsaPrivateKey(htiConfiguration.getPrivateKey()));
 			return jws.getCompactSerialization();
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new RuntimeException(e);

@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  *
  */
-@Entity
+@Entity(name = "treatment")
 public class Treatment implements Serializable, Comparable {
 	@Id
 	String id;

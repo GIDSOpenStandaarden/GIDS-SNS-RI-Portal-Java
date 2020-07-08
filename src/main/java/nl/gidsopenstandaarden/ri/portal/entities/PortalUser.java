@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  *
  */
-@Entity
+@Entity(name = "portal_user")
 public class PortalUser implements Serializable {
 	@Id
 	@GeneratedValue

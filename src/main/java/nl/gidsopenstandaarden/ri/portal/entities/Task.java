@@ -9,7 +9,12 @@ import javax.persistence.Id;
  */
 @Entity(name = "task")
 public class Task {
+	/**
+	 * Field should always be "Task"
+	 */
 	String resourceType = "Task";
+	String status = "requested";
+	String intent = "plan";
 
 	@Id
 	@GeneratedValue
@@ -17,8 +22,6 @@ public class Task {
 
 	String identifier;
 	String definitionReference;
-	String status = "requested";
-	String intent = "plan";
 	String forUser;
 
 	public String getDefinitionReference() {
@@ -59,10 +62,6 @@ public class Task {
 
 	public String getResourceType() {
 		return resourceType;
-	}
-
-	public void setResourceType(String resourceType) {
-		this.resourceType = resourceType;
 	}
 
 	public String getStatus() {
