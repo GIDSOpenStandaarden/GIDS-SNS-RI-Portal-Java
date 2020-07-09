@@ -13,6 +13,7 @@ import nl.gidsopenstandaarden.ri.portal.repository.TaskRepository;
 import nl.gidsopenstandaarden.ri.portal.util.KeyUtils;
 import nl.gidsopenstandaarden.ri.portal.valueobject.LaunchValueObject;
 import nl.gidsopenstandaarden.ri.portal.valueobject.TaskValueObject;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -87,6 +88,8 @@ public class HtiLaunchService {
 			claims.setExpirationTimeMinutesInTheFuture(5);
 			claims.setClaim("task", toMap(toDto(buildTask(treatment, portalUser))));
 			jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA512);
+			JsonWebKey jsonWebKey = JsonWebKey.Factory.newJwk(KeyUtils.getRsaPublicKey(htiConfiguration.getPublicKey()));
+			jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
 			jws.setPayload(claims.toJson());
 			jws.setKey(KeyUtils.getRsaPrivateKey(htiConfiguration.getPrivateKey()));
 			return jws.getCompactSerialization();
