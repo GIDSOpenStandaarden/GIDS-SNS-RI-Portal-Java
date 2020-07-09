@@ -29,7 +29,7 @@ public class HtiConfiguration {
 			KeyPair keyPair = KeyUtils.generateKeyPair();
 			publicKey = KeyUtils.encodeKey(keyPair.getPublic());
 			privateKey = KeyUtils.encodeKey(keyPair.getPrivate());
-			LOG.info(String.format("Generated HTI keypair, public key is:\n%s", KeyUtils.encodeKeyPem(keyPair.getPublic(), "PUBLIC")));
+			LOG.info(String.format("Generated HTI keypair, public key is:%n%s", KeyUtils.encodeKeyPem(keyPair.getPublic(), "PUBLIC")));
 		}
 	}
 
