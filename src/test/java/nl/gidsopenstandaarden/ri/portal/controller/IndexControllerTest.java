@@ -1,6 +1,6 @@
 package nl.gidsopenstandaarden.ri.portal.controller;
 
-import nl.gidsopenstandaarden.ri.portal.entities.PortalUser;
+import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.service.PortalUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

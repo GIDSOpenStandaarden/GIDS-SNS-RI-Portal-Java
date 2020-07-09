@@ -2,8 +2,8 @@ package nl.gidsopenstandaarden.ri.portal.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.gidsopenstandaarden.ri.portal.configuration.HtiConfiguration;
-import nl.gidsopenstandaarden.ri.portal.entities.PortalUser;
-import nl.gidsopenstandaarden.ri.portal.entities.Treatment;
+import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
+import nl.gidsopenstandaarden.ri.portal.entity.Treatment;
 import nl.gidsopenstandaarden.ri.portal.service.PortalUserService;
 import nl.gidsopenstandaarden.ri.portal.service.TreatmentService;
 import nl.gidsopenstandaarden.ri.portal.util.KeyUtils;

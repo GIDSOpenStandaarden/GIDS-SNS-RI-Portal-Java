@@ -1,4 +1,4 @@
-package nl.gidsopenstandaarden.ri.portal.entities;
+package nl.gidsopenstandaarden.ri.portal.entity;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;

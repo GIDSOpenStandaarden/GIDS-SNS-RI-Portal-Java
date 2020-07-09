@@ -1,6 +1,6 @@
 package nl.gidsopenstandaarden.ri.portal.service;
 
-import nl.gidsopenstandaarden.ri.portal.entities.PortalUser;
+import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.repository.PortalUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

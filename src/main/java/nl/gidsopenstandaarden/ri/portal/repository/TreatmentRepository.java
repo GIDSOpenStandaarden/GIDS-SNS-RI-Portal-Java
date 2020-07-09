@@ -1,6 +1,6 @@
 package nl.gidsopenstandaarden.ri.portal.repository;
 
-import nl.gidsopenstandaarden.ri.portal.entities.Treatment;
+import nl.gidsopenstandaarden.ri.portal.entity.Treatment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

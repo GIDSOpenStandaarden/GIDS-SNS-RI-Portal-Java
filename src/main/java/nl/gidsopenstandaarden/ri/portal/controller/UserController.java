@@ -1,6 +1,6 @@
 package nl.gidsopenstandaarden.ri.portal.controller;
 
-import nl.gidsopenstandaarden.ri.portal.entities.PortalUser;
+import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.exception.NotLoggedInException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

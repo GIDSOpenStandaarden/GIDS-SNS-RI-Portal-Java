@@ -1,4 +1,4 @@
-package nl.gidsopenstandaarden.ri.portal.entities;
+package nl.gidsopenstandaarden.ri.portal.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

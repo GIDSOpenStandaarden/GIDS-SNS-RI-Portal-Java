@@ -1,4 +1,4 @@
-package nl.gidsopenstandaarden.ri.portal.entities;
+package nl.gidsopenstandaarden.ri.portal.entity;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

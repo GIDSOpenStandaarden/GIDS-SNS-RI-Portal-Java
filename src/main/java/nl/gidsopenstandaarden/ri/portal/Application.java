@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
  *
  */
 @SpringBootApplication
-@EntityScan("nl.gidsopenstandaarden.ri.portal.entities")
+@EntityScan("nl.gidsopenstandaarden.ri.portal.entity")
 public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

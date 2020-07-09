@@ -1,7 +1,7 @@
 package nl.gidsopenstandaarden.ri.portal.controller;
 
-import nl.gidsopenstandaarden.ri.portal.entities.PortalUser;
-import nl.gidsopenstandaarden.ri.portal.entities.Treatment;
+import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
+import nl.gidsopenstandaarden.ri.portal.entity.Treatment;
 import nl.gidsopenstandaarden.ri.portal.exception.NotLoggedInException;
 import nl.gidsopenstandaarden.ri.portal.service.HtiLaunchService;
 import nl.gidsopenstandaarden.ri.portal.service.TreatmentService;
