@@ -6,6 +6,8 @@ package nl.gidsopenstandaarden.ri.portal.util;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.lang.JoseException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,8 +18,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.commons.codec.binary.Base64.encodeBase64String;
 
@@ -109,4 +109,10 @@ public class KeyUtils {
 		// Generate a pair
 		return generator.generateKeyPair();
 	}
+
+	public static String getFingerPrint(PublicKey publicKey) throws JoseException {
+		final JsonWebKey jsonWebKey = JsonWebKey.Factory.newJwk(publicKey);
+		return jsonWebKey.calculateBase64urlEncodedThumbprint("MD5");
+	}
+
 }
