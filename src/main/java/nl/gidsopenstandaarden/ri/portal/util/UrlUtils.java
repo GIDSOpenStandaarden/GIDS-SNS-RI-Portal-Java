@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
+import java.net.URL;
 
 /**
  *
@@ -22,10 +23,25 @@ public class UrlUtils {
 	public static String getServerUrl(String path, HttpServletRequest servletRequest) {
 		int serverPort = servletRequest.getServerPort();
 		String scheme = servletRequest.getScheme();
+		String serverName = servletRequest.getServerName();
+		return getServerUrl(path, serverPort, scheme, serverName);
+	}
+
+	@NotNull
+	public static String getServerUrl(String path, URL url) {
+		int serverPort = url.getPort();
+		String scheme = url.getProtocol();
+		String serverName = url.getHost();
+		return getServerUrl(path, serverPort, scheme, serverName);
+	}
+
+	@NotNull
+	private static String getServerUrl(String path, int serverPort, String scheme, String serverName) {
 		if (isDefault(scheme, serverPort)) {
-			return scheme + "://" + servletRequest.getServerName() + path;
+			return scheme + "://" + serverName + path;
 		} else {
-			return scheme + "://" + servletRequest.getServerName() + ":" + serverPort + path;
+			return scheme + "://" + serverName + ":" + serverPort + path;
 		}
 	}
+
 }

@@ -6,16 +6,18 @@ package nl.gidsopenstandaarden.ri.portal.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import nl.gidsopenstandaarden.ri.portal.configuration.TreatmentsConfiguration;
 import nl.gidsopenstandaarden.ri.portal.controller.TreatmentController;
 import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.entity.Treatment;
 import nl.gidsopenstandaarden.ri.portal.repository.TreatmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.gidsopenstandaarden.ri.portal.util.UrlUtils;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -24,14 +26,18 @@ import java.util.List;
 @Service
 public class TreatmentService {
 
-	@Autowired
-	public void setTreatmentRepository(TreatmentRepository treatmentRepository) {
+
+	private final TreatmentRepository treatmentRepository;
+
+	private final ResourceLoader resourceLoader;
+
+	private final TreatmentsConfiguration treatmentsConfiguration;
+
+	public TreatmentService(TreatmentRepository treatmentRepository, ResourceLoader resourceLoader, TreatmentsConfiguration treatmentsConfiguration) {
 		this.treatmentRepository = treatmentRepository;
+		this.resourceLoader = resourceLoader;
+		this.treatmentsConfiguration = treatmentsConfiguration;
 	}
-
-	TreatmentRepository treatmentRepository;
-
-	private ResourceLoader resourceLoader;
 
 	public Treatment getTreatment(String id) {
 		return treatmentRepository.findById(id).orElse(null);
@@ -48,14 +54,11 @@ public class TreatmentService {
 
 		TreatmentController.Treatments treatments = mapper.readValue(resourceLoader.getResource("classpath:treatments.yaml").getURL(), TreatmentController.Treatments.class);
 		for (Treatment treatment : treatments.getTreatments()) {
-			if (!treatmentRepository.findById(treatment.getId()).isPresent()) {
-				treatmentRepository.save(treatment);
-			}
+			treatment = treatmentRepository.findById(treatment.getId()).orElse(treatment);
+			treatment.setAud(UrlUtils.getServerUrl("", new URL(treatmentsConfiguration.getLaunchUrl())));
+			treatment.setUrl(treatmentsConfiguration.getLaunchUrl());
+			treatmentRepository.save(treatment);
 		}
 	}
 
-	@Autowired
-	public void setResourceLoader(ResourceLoader resourceLoader) {
-		this.resourceLoader = resourceLoader;
-	}
 }

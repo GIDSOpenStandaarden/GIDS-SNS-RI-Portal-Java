@@ -13,8 +13,6 @@ import nl.gidsopenstandaarden.ri.portal.repository.TaskRepository;
 import nl.gidsopenstandaarden.ri.portal.util.KeyUtils;
 import nl.gidsopenstandaarden.ri.portal.valueobject.LaunchValueObject;
 import nl.gidsopenstandaarden.ri.portal.valueobject.TaskValueObject;
-import org.jose4j.jwk.PublicJsonWebKey;
-import org.jose4j.jwk.Use;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -53,10 +51,10 @@ public class HtiLaunchService {
 		this.taskRepository = taskRepository;
 	}
 
-	public LaunchValueObject startLaunch(PortalUser portalUser, Treatment treatment) throws JoseException {
+	public LaunchValueObject startLaunch(PortalUser portalUser, Treatment treatment, String host) throws JoseException {
 		LaunchValueObject rv = new LaunchValueObject();
 		rv.setUrl(treatment.getUrl());
-		rv.setToken(generateToken(portalUser, treatment));
+		rv.setToken(generateToken(portalUser, treatment, host));
 		return rv;
 	}
 
@@ -78,12 +76,12 @@ public class HtiLaunchService {
 		}
 	}
 
-	private String generateToken(PortalUser portalUser, Treatment treatment) throws JoseException {
+	private String generateToken(PortalUser portalUser, Treatment treatment, String issuer) throws JoseException {
 		try {
 			JsonWebSignature jws = new JsonWebSignature();
 			JwtClaims claims = new JwtClaims();
 			claims.setAudience(treatment.getAud());
-			claims.setIssuer(htiConfiguration.getIssuer());
+			claims.setIssuer(issuer);
 			claims.setIssuedAtToNow();
 			claims.setGeneratedJwtId();
 			claims.setExpirationTimeMinutesInTheFuture(5);

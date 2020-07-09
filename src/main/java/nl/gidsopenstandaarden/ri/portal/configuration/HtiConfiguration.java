@@ -23,7 +23,6 @@ import java.security.NoSuchAlgorithmException;
 public class HtiConfiguration {
 	public String publicKey;
 	public String privateKey;
-	public String issuer;
 	static final Log LOG = LogFactory.getLog(HtiConfiguration.class);
 
 	@PostConstruct
@@ -35,14 +34,6 @@ public class HtiConfiguration {
 			privateKey = KeyUtils.encodeKey(keyPair.getPrivate());
 			LOG.info(String.format("Generated HTI keypair, public key is:%n%s", KeyUtils.encodeKeyPem(keyPair.getPublic(), "PUBLIC")));
 		}
-	}
-
-	public String getIssuer() {
-		return issuer;
-	}
-
-	public void setIssuer(String issuer) {
-		this.issuer = issuer;
 	}
 
 	public String getPrivateKey() {

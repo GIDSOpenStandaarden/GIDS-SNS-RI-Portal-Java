@@ -96,24 +96,24 @@ public class TreatmentControllerTest {
 				.andExpect(status().is(HttpStatus.OK.value()))
 				.andExpect(content().contentTypeCompatibleWith("text/html"))
 				.andExpect(content().string(StringContains.containsString(treatment.getUrl())))
-				.andDo(mvcResult -> tasks[0] = getTaskValueObject(mvcResult, treatment));
+				.andDo(mvcResult -> tasks[0] = getTaskValueObject(mvcResult, treatment, "http://localhost"));
 		mockMvc.perform(get("/api/treatment/" + treatment.getId()).sessionAttr("user", user))
 				.andExpect(status().is(HttpStatus.OK.value()))
 				.andExpect(content().contentTypeCompatibleWith("text/html"))
 				.andExpect(content().string(StringContains.containsString(treatment.getUrl())))
-				.andDo(mvcResult -> tasks[1] = getTaskValueObject(mvcResult, treatment));
+				.andDo(mvcResult -> tasks[1] = getTaskValueObject(mvcResult, treatment, "http://localhost"));
 
 		Assertions.assertEquals(tasks[0].getId(), tasks[1].getId());
 	}
 
-	private TaskValueObject getTaskValueObject(MvcResult mvcResult, Treatment treatment) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidJwtException {
+	private TaskValueObject getTaskValueObject(MvcResult mvcResult, Treatment treatment, String issuer) throws SAXException, IOException, ParserConfigurationException, XPathExpressionException, NoSuchAlgorithmException, InvalidKeySpecException, InvalidJwtException {
 		String content = mvcResult.getResponse().getContentAsString();
 		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(content)));
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		String token = xpath.evaluate("//form/input[@name='token']/@value", document);
 
 		JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-				.setExpectedIssuer(htiConfiguration.getIssuer())
+				.setExpectedIssuer(issuer)
 				.setExpectedAudience(treatment.getAud())
 				.setVerificationKey(KeyUtils.getRsaPublicKey(htiConfiguration.getPublicKey()))
 				.build();

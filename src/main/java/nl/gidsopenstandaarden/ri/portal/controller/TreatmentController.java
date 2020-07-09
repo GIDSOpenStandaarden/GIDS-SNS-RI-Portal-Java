@@ -9,13 +9,16 @@ import nl.gidsopenstandaarden.ri.portal.entity.Treatment;
 import nl.gidsopenstandaarden.ri.portal.exception.NotLoggedInException;
 import nl.gidsopenstandaarden.ri.portal.service.HtiLaunchService;
 import nl.gidsopenstandaarden.ri.portal.service.TreatmentService;
+import nl.gidsopenstandaarden.ri.portal.util.UrlUtils;
 import nl.gidsopenstandaarden.ri.portal.valueobject.LaunchValueObject;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.net.MalformedURLException;
 import java.util.List;
 
 /**
@@ -39,13 +42,14 @@ public class TreatmentController {
 	}
 
 	@RequestMapping(value = "{id}", produces = MediaType.TEXT_HTML_VALUE)
-	public String start(@PathVariable("id") String id, HttpSession session) throws JoseException {
+	public String start(@PathVariable("id") String id, HttpSession session, HttpServletRequest request) throws JoseException, MalformedURLException {
 		PortalUser portalUser = (PortalUser) session.getAttribute("user");
 		if (portalUser == null) {
 			throw new NotLoggedInException("No active session found");
 		}
 		Treatment treatment = treatmentService.getTreatment(id);
-		LaunchValueObject launchValueObject = htiLaunchService.startLaunch(portalUser, treatment);
+
+		LaunchValueObject launchValueObject = htiLaunchService.startLaunch(portalUser, treatment, UrlUtils.getServerUrl("", request));
 
 		return "<html>\n" +
 				"<head>\n" +
