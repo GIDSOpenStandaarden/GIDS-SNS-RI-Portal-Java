@@ -15,8 +15,9 @@ import java.net.URL;
  */
 public class UrlUtils {
 	public static boolean isDefault(String scheme, int serverPort) {
-		return StringUtils.equals("http", scheme) && serverPort == 80
-				|| StringUtils.equals("https", scheme) && serverPort == 443;
+		return serverPort == -1 || // Port is -1
+				(StringUtils.equals("http", scheme) && serverPort == 80 // Scheme is http and port is 80
+						|| StringUtils.equals("https", scheme) && serverPort == 443); // Scheme is https and port is 443
 	}
 
 	@NotNull

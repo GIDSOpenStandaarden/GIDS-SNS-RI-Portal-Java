@@ -70,7 +70,9 @@ public class UrlUtilsTest {
 	@Test
 	public void testIsDefault() {
 		Assertions.assertTrue(UrlUtils.isDefault("http", 80));
+		Assertions.assertTrue(UrlUtils.isDefault("http", -1));
 		Assertions.assertTrue(UrlUtils.isDefault("https", 443));
+		Assertions.assertTrue(UrlUtils.isDefault("https", -1));
 		Assertions.assertFalse(UrlUtils.isDefault("http", 8080));
 		Assertions.assertFalse(UrlUtils.isDefault("http", 443));
 		Assertions.assertFalse(UrlUtils.isDefault("https", 80));
