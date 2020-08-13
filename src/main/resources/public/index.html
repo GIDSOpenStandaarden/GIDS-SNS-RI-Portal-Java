@@ -63,16 +63,22 @@
 <script src="js/index.js"></script>
 <script type="application/javascript">
   window.onload = (event) => {
+    const responseHandler = (response) => {
+      if (response.status === 403) {
+        window.location = '/'
+      }
+      return response.json();
+    }
     fetch('/api/user?_=' + new Date().getTime())
-      .then(response => response.json())
+      .then(responseHandler)
       .then(data => {
         let elements = document.querySelectorAll('.content');
         elements.forEach(element => (
-          element.innerText = element.innerText.replace('NAME', data['sub'])
+          element.innerText = element.innerText.replace('NAME', data['subject'])
         ));
 
       });
-    fetch('/api/treatment?_=' + new Date().getTime()).then(response => response.json()).then(data => {
+    fetch('/api/treatment?_=' + new Date().getTime()).then(responseHandler).then(data => {
       data.forEach(treatment => {
         let treatmentsElement = document.querySelector(".treatments");
         let treatmentElement = document.querySelector('#treatmentTemplate').cloneNode(true);
