@@ -1,4 +1,4 @@
-# GIDS Health Tool Interoperability (HTI) Reference Implementation Portal in Java (gids-hti-ri-portal-java) 
+# GIDS Social Network Standard (SNS) Reference Implementation Portal in Java (gids-sns-ri-portal-java) 
 
 
 This application is a [Spring Boot](http://projects.spring.io/spring-boot/) application.
