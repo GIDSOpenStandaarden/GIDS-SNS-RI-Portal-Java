@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "login.srv")
 public class LoginSrvConfiguration {
 	String serverUrl;
-	String jwtSecret;
+	String jwtPublicKey;
 
 	public String getServerUrl() {
 		return serverUrl;
@@ -24,11 +24,11 @@ public class LoginSrvConfiguration {
 		this.serverUrl = serverUrl;
 	}
 
-	public String getJwtSecret() {
-		return jwtSecret;
+	public String getJwtPublicKey() {
+		return jwtPublicKey;
 	}
 
-	public void setJwtSecret(String jwtSecret) {
-		this.jwtSecret = jwtSecret;
+	public void setJwtPublicKey(String jwtPublicKey) {
+		this.jwtPublicKey = jwtPublicKey;
 	}
 }

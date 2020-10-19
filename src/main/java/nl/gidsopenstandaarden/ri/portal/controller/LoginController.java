@@ -16,7 +16,6 @@ import org.jose4j.jwt.MalformedClaimException;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.keys.HmacKey;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.View;
@@ -25,8 +24,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 
 /**
@@ -77,10 +76,12 @@ public class LoginController {
 	}
 
 	@RequestMapping(value = "/loginsrv-auth")
-	public View loginSrvAuth(@CookieValue("jwt_token") String jwtToken, HttpSession session) throws InvalidJwtException, MalformedClaimException {
+	public View loginSrvAuth(@CookieValue("jwt_token") String jwtToken, HttpSession session) throws InvalidJwtException, MalformedClaimException, InvalidKeySpecException, NoSuchAlgorithmException {
+
+		final RSAPublicKey rsaPublicKey = KeyUtils.getRsaPublicKey(loginSrvConfiguration.getJwtPublicKey());
 		JwtConsumer jwtConsumer = new JwtConsumerBuilder()
 				.setSkipSignatureVerification()
-				.setVerificationKey(new HmacKey(loginSrvConfiguration.getJwtSecret().getBytes(StandardCharsets.UTF_8)))
+				.setVerificationKey(rsaPublicKey)
 				.build();
 
 		final JwtClaims jwtClaims = jwtConsumer.processToClaims(jwtToken);
