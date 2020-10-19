@@ -6,25 +6,27 @@ package nl.gidsopenstandaarden.ri.portal.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpSession;
 
 /**
  *
  */
+
 @Controller
-@RequestMapping("/")
-public class IndexController {
+public class LogoutController {
 
-	@RequestMapping
-	public String index(HttpSession session) {
-		if (!isLoggedIn(session)) {
-			return "redirect:login.html";
-		}
-		return "redirect:index.html";
+
+	public LogoutController() {
 	}
 
-	private boolean isLoggedIn(HttpSession session) {
-		return session.getAttribute("user") != null;
+	@RequestMapping("/logout")
+	public View irmaAuth(HttpSession session) {
+		session.removeAttribute("user");
+		return new RedirectView("/");
+
 	}
+
 }

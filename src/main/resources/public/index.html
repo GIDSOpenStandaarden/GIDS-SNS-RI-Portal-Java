@@ -21,7 +21,7 @@
     <div class="nav-wrapper">
         <a href="#" class="brand-logo">Portal</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="about.html">About</a></li>
+            <li><a href="/logout">Logout</a></li>
         </ul>
     </div>
 </nav>
@@ -62,7 +62,7 @@
 <script src="js/materialize.min.js"></script>
 <script src="js/index.js"></script>
 <script type="application/javascript">
-  window.onload = (event) => {
+  window.onload = () => {
     const responseHandler = (response) => {
       if (response.status === 403) {
         window.location = '/'
@@ -87,12 +87,13 @@
         let elements = treatmentElement.querySelectorAll('.content');
         elements.forEach(element => {
           for (const key in treatment) {
-            element.innerText = element.innerText.replace(`{${key}}`, treatment[key]);
+            if (treatment.hasOwnProperty(key)) {
+                element.innerText = element.innerText.replace(`{${key}}`, treatment[key]);
+            }
           }
         });
         const treatmentId = treatment['id'];
-        treatmentElement.querySelector('a').onclick = function (event) {
-          let target = event.target;
+        treatmentElement.querySelector('a').onclick = function () {
           document.location = '/api/treatment/' + treatmentId;
           return false;
         };
