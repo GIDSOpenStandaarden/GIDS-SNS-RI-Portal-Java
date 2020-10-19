@@ -35,7 +35,7 @@ public class IndexControllerTest {
 	@Test
 	public void indexLogin() throws Exception {
 		mockMvc.perform(get("/"))
-				.andExpect(MockMvcResultMatchers.forwardedUrl("/login"));
+				.andExpect(MockMvcResultMatchers.redirectedUrl("login.html"));
 	}
 	@Test
 	public void indexLogedin() throws Exception {

@@ -64,7 +64,7 @@ class LoginControllerTest {
 	public void login() throws Exception {
 		String redirectUri = "http://localhost/irma-auth";
 
-		mockMvc.perform(get("/login"))
+		mockMvc.perform(get("/login/irma"))
 				.andExpect(redirectedUrl(irmaClientConfiguration.getServerUrl() + "?redirect_uri=" + URLEncoder.encode(redirectUri, "ascii")));
 	}
 
