@@ -92,12 +92,12 @@ public class TreatmentControllerTest {
 		Assert.notEmpty(treatments, "Expecting some treatments to test with");
 		Treatment treatment = treatments.get(0);
 		final TaskValueObject[] tasks = {null, null};
-		mockMvc.perform(get("/api/treatment/" + treatment.getId()).sessionAttr("user", user))
+		mockMvc.perform(get("/api/treatment/launch/" + treatment.getId()).sessionAttr("user", user))
 				.andExpect(status().is(HttpStatus.OK.value()))
 				.andExpect(content().contentTypeCompatibleWith("text/html"))
 				.andExpect(content().string(StringContains.containsString(treatment.getUrl())))
 				.andDo(mvcResult -> tasks[0] = getTaskValueObject(mvcResult, treatment, "http://localhost"));
-		mockMvc.perform(get("/api/treatment/" + treatment.getId()).sessionAttr("user", user))
+		mockMvc.perform(get("/api/treatment/launch/" + treatment.getId()).sessionAttr("user", user))
 				.andExpect(status().is(HttpStatus.OK.value()))
 				.andExpect(content().contentTypeCompatibleWith("text/html"))
 				.andExpect(content().string(StringContains.containsString(treatment.getUrl())))

@@ -14,4 +14,6 @@ import java.util.Optional;
  */
 public interface TaskRepository extends JpaRepository<Task, Long> {
 	Optional<Task> findTaskByDefinitionReferenceAndForUser(String definitionReference, String userReference);
+
+	Optional<Task> findTaskByIdentifier(String identifier);
 }

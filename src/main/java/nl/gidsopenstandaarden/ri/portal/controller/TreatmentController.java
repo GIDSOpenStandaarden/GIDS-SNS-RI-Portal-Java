@@ -41,7 +41,7 @@ public class TreatmentController {
 		this.treatmentService = treatmentService;
 	}
 
-	@RequestMapping(value = "{id}", produces = MediaType.TEXT_HTML_VALUE)
+	@RequestMapping(value = "launch/{id}", produces = MediaType.TEXT_HTML_VALUE)
 	public String start(@PathVariable("id") String id, HttpSession session, HttpServletRequest request) throws JoseException, MalformedURLException {
 		PortalUser portalUser = (PortalUser) session.getAttribute("user");
 		if (portalUser == null) {
@@ -62,13 +62,29 @@ public class TreatmentController {
 				"</html>";
 	}
 
-	@GetMapping
+	@RequestMapping(value = "",method = RequestMethod.GET)
 	public List<Treatment> treatments(HttpSession session) {
 		PortalUser portalUser = (PortalUser) session.getAttribute("user");
 		if (portalUser == null) {
 			throw new NotLoggedInException("No active session found");
 		}
 		return treatmentService.getTreatmentsForUser(portalUser);
+	}
+
+	@RequestMapping(value = "{id}",method = RequestMethod.GET)
+	public Treatment treatment(HttpSession session, @PathVariable("id") String id) {
+		PortalUser portalUser = (PortalUser) session.getAttribute("user");
+		if (portalUser == null) {
+			throw new NotLoggedInException("No active session found");
+		}
+		Treatment treatment = treatmentService.getTreatment(id);
+		if (treatment == null) {
+			// Fix non existing treatments for now.
+			treatment = new Treatment();
+			treatment.setName("Dagboek");
+			treatment.setDescription("Maak een dagboek.");
+		}
+		return treatment;
 	}
 
 	public static class Treatments {

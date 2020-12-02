@@ -21,19 +21,17 @@ import java.security.NoSuchAlgorithmException;
 @Configuration
 @ConfigurationProperties(prefix = "hti")
 public class HtiConfiguration {
+	static final Log LOG = LogFactory.getLog(HtiConfiguration.class);
 	public String publicKey;
 	public String privateKey;
-	static final Log LOG = LogFactory.getLog(HtiConfiguration.class);
+	public String issuerOverride;
 
-	@PostConstruct
-	public void init() throws NoSuchAlgorithmException {
-		if (StringUtils.isEmpty(publicKey) || StringUtils.isEmpty(privateKey)) {
-			LOG.info("HTI public and/or private key not found, generating a new pair");
-			KeyPair keyPair = KeyUtils.generateKeyPair();
-			publicKey = KeyUtils.encodeKey(keyPair.getPublic());
-			privateKey = KeyUtils.encodeKey(keyPair.getPrivate());
-			LOG.info(String.format("Generated HTI keypair, public key is:%n%s", KeyUtils.encodeKeyPem(keyPair.getPublic(), "PUBLIC")));
-		}
+	public String getIssuerOverride() {
+		return issuerOverride;
+	}
+
+	public void setIssuerOverride(String issuerOverride) {
+		this.issuerOverride = issuerOverride;
 	}
 
 	public String getPrivateKey() {
@@ -50,5 +48,16 @@ public class HtiConfiguration {
 
 	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;
+	}
+
+	@PostConstruct
+	public void init() throws NoSuchAlgorithmException {
+		if (StringUtils.isEmpty(publicKey) || StringUtils.isEmpty(privateKey)) {
+			LOG.info("HTI public and/or private key not found, generating a new pair");
+			KeyPair keyPair = KeyUtils.generateKeyPair();
+			publicKey = KeyUtils.encodeKey(keyPair.getPublic());
+			privateKey = KeyUtils.encodeKey(keyPair.getPrivate());
+			LOG.info(String.format("Generated HTI keypair, public key is:%n%s", KeyUtils.encodeKeyPem(keyPair.getPublic(), "PUBLIC")));
+		}
 	}
 }

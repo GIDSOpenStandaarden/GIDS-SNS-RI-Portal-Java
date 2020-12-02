@@ -9,21 +9,19 @@ import nl.gidsopenstandaarden.ri.portal.configuration.HtiConfiguration;
 import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.entity.Task;
 import nl.gidsopenstandaarden.ri.portal.entity.Treatment;
-import nl.gidsopenstandaarden.ri.portal.repository.TaskRepository;
 import nl.gidsopenstandaarden.ri.portal.util.KeyUtils;
 import nl.gidsopenstandaarden.ri.portal.valueobject.LaunchValueObject;
 import nl.gidsopenstandaarden.ri.portal.valueobject.TaskValueObject;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.lang.JoseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -32,60 +30,46 @@ import java.util.UUID;
 @Service
 public class HtiLaunchService {
 
-	private HtiConfiguration htiConfiguration;
-	private ObjectMapper objectMapper;
-	private TaskRepository taskRepository;
+	protected final HtiConfiguration htiConfiguration;
+	protected final ObjectMapper objectMapper;
+	protected final TaskService taskService;
 
-	@Autowired
-	public void setHtiConfiguration(HtiConfiguration htiConfiguration) {
+	public HtiLaunchService(HtiConfiguration htiConfiguration, ObjectMapper objectMapper, TaskService taskService) {
 		this.htiConfiguration = htiConfiguration;
-	}
-
-	@Autowired
-	public void setObjectMapper(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
+		this.taskService = taskService;
 	}
 
-	@Autowired
-	public void setTaskRepository(TaskRepository taskRepository) {
-		this.taskRepository = taskRepository;
+	public String getUserReference(PortalUser portalUser) {
+		return "Person/" + portalUser.getIdentifier();
+	}
+
+
+	public LaunchValueObject startLaunch(Treatment treatment, Task task, String host) throws JoseException {
+		LaunchValueObject rv = new LaunchValueObject();
+		rv.setUrl(treatment.getUrl());
+		rv.setToken(generateToken(treatment, task, host));
+		return rv;
 	}
 
 	public LaunchValueObject startLaunch(PortalUser portalUser, Treatment treatment, String host) throws JoseException {
 		LaunchValueObject rv = new LaunchValueObject();
 		rv.setUrl(treatment.getUrl());
-		rv.setToken(generateToken(portalUser, treatment, host));
+		Task task = getOrCreateTask(treatment, portalUser);
+		rv.setToken(generateToken(treatment, task, host));
 		return rv;
 	}
 
-	private Task buildTask(Treatment treatment, PortalUser portalUser) {
-		String treatmentReference = "TaskDefinition/" + treatment.getId();
-		String userReference = "Person/" + portalUser.getIdentifier();
-		Optional<Task> optional = taskRepository.findTaskByDefinitionReferenceAndForUser(treatmentReference, userReference);
-		if (optional.isPresent()) {
-			return optional.get();
-		} else {
-			Task task = new Task();
-			task.setStatus("request");
-			task.setIntent("plan");
-			task.setIdentifier(UUID.randomUUID().toString());
-			task.setDefinitionReference(treatmentReference);
-			task.setForUser(userReference);
-			taskRepository.save(task);
-			return task;
-		}
-	}
-
-	private String generateToken(PortalUser portalUser, Treatment treatment, String issuer) throws JoseException {
+	private String generateToken(Treatment treatment, Task task, String issuer) throws JoseException {
 		try {
 			JsonWebSignature jws = new JsonWebSignature();
 			JwtClaims claims = new JwtClaims();
 			claims.setAudience(treatment.getAud());
-			claims.setIssuer(issuer);
+			claims.setIssuer(getIssuer(issuer));
 			claims.setIssuedAtToNow();
 			claims.setGeneratedJwtId();
 			claims.setExpirationTimeMinutesInTheFuture(5);
-			claims.setClaim("task", toMap(toDto(buildTask(treatment, portalUser))));
+			claims.setClaim("task", toMap(toDto(task)));
 			jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA512);
 			jws.setKeyIdHeaderValue(KeyUtils.getFingerPrint(KeyUtils.getRsaPublicKey(htiConfiguration.getPublicKey())));
 			jws.setPayload(claims.toJson());
@@ -94,6 +78,32 @@ public class HtiLaunchService {
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private String getIssuer(String issuer) {
+		return StringUtils.isNotEmpty(htiConfiguration.getIssuerOverride()) ? htiConfiguration.getIssuerOverride() : issuer;
+	}
+
+	private Task getOrCreateTask(Treatment treatment, PortalUser portalUser) {
+		String treatmentReference = getTreatmentReference(treatment);
+		String userReference = getUserReference(portalUser);
+		Task task = taskService.getByDefinitionReferenceAndForUser(getTreatmentReference(treatment), getUserReference(portalUser));
+		if (task != null) {
+			return task;
+		} else {
+			task = new Task();
+			task.setStatus(org.hl7.fhir.dstu3.model.Task.TaskStatus.REQUESTED.toCode());
+			task.setIntent(org.hl7.fhir.dstu3.model.Task.TaskIntent.PLAN.toCode());
+			task.setIdentifier(UUID.randomUUID().toString());
+			task.setDefinitionReference(treatmentReference);
+			task.setForUser(userReference);
+			taskService.save(task);
+			return task;
+		}
+	}
+
+	private String getTreatmentReference(Treatment treatment) {
+		return "ActivityDefinition/" + treatment.getId();
 	}
 
 	private TaskValueObject toDto(Task task) {
@@ -107,7 +117,8 @@ public class HtiLaunchService {
 		return rv;
 	}
 
-	private <T> Map toMap(T task) {
+	@SuppressWarnings("unchecked")
+	private <T> Map<String, Object> toMap(T task) {
 		return objectMapper.convertValue(task, Map.class);
 	}
 }

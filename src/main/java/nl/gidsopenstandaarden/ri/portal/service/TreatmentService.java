@@ -12,6 +12,7 @@ import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.entity.Treatment;
 import nl.gidsopenstandaarden.ri.portal.repository.TreatmentRepository;
 import nl.gidsopenstandaarden.ri.portal.util.UrlUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
@@ -54,10 +55,20 @@ public class TreatmentService {
 
 		TreatmentController.Treatments treatments = mapper.readValue(resourceLoader.getResource("classpath:treatments.yaml").getURL(), TreatmentController.Treatments.class);
 		for (Treatment treatment : treatments.getTreatments()) {
-			treatment = treatmentRepository.findById(treatment.getId()).orElse(treatment);
-			treatment.setAud(UrlUtils.getServerUrl("", new URL(treatmentsConfiguration.getLaunchUrl())));
-			treatment.setUrl(treatmentsConfiguration.getLaunchUrl());
-			treatmentRepository.save(treatment);
+			Treatment original = treatmentRepository.findById(treatment.getId()).orElse(treatment);
+			if (StringUtils.isEmpty(treatment.getAud())) {
+				original.setAud(UrlUtils.getServerUrl("", new URL(treatmentsConfiguration.getLaunchUrl())));
+			} else {
+				original.setAud(treatment.getAud());
+			}
+			if (StringUtils.isEmpty(treatment.getUrl())) {
+				original.setUrl(treatmentsConfiguration.getLaunchUrl());
+			} else {
+				original.setUrl(treatment.getUrl());
+			}
+			original.setDescription(treatment.getDescription());
+			original.setName(treatment.getName());
+			treatmentRepository.save(original);
 		}
 	}
 

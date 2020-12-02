@@ -7,12 +7,14 @@ package nl.gidsopenstandaarden.ri.portal;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  *
  */
 @SpringBootApplication
-@EntityScan("nl.gidsopenstandaarden.ri.portal.entity")
+@EntityScan(value = {"nl.gidsopenstandaarden.ri.portal.entity"})
+@ComponentScan(value = {"nl.gidsopenstandaarden.ri.portal", "org.gidsopenstandaarden.solid.client"})
 public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

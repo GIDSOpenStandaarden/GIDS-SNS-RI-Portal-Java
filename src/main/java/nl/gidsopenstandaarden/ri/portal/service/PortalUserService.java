@@ -32,4 +32,15 @@ public class PortalUserService {
 			return portalUser;
 		}
 	}
+
+	public boolean updateWebId(PortalUser user, String webId) {
+		Optional<PortalUser> optional = portalUserRepository.findById(user.getId());
+		if (optional.isPresent()) {
+			user = optional.get();
+			user.setWebId(webId);
+			portalUserRepository.save(user);
+			return false;
+		}
+		return true;
+	}
 }

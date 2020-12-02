@@ -19,6 +19,7 @@ public class PortalUser implements Serializable {
 	private Long id;
 	private String identifier;
 	private String subject;
+	private String webId;
 
 	public Long getId() {
 		return id;
@@ -26,6 +27,10 @@ public class PortalUser implements Serializable {
 
 	public String getIdentifier() {
 		return identifier;
+	}
+
+	public String getWebId() {
+		return webId;
 	}
 
 	public void setIdentifier(String identifier) {
@@ -38,5 +43,9 @@ public class PortalUser implements Serializable {
 
 	public void setSubject(String sub) {
 		this.subject = sub;
+	}
+
+	public void setWebId(String webId) {
+		this.webId = webId;
 	}
 }

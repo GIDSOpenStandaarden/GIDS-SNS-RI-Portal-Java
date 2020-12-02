@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" href="css/styles.css?v=1.0">
     <link rel="stylesheet" href="css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 
@@ -28,16 +29,36 @@
 <div class="container">
     <div class="section">
         <div class="row">
-            <div class="col l10 offset-l1 s12">
-                <h2 class="center">GIDS SNS Reference Implementation Portal</h2>
-            </div>
-        </div>
-        <div class="row">
             <div class="col s12 m12">
                 <div class="card blue lighten-2">
                     <div class="card-content white-text">
                         <span class="card-title content">Hi NAME,</span>
                         <p class="content">We welcome NAME to this portal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="solid_unconnected row" style="display: none;">
+            <div class="col s12 m12">
+                <div class="card green lighten-2">
+                    <div class="card-content white-text">
+                        <span class="card-title content">Your private resources</span>
+                        <a href="/solid/auth?idp=https://solidcommunity.net">Connect your Solid POD</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="solid_connected col s12 m12" style="display: none;">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col s12 m12">
+                <div class="card green lighten-2">
+                    <div class="card-content white-text">
+                        <span class="card-title content">New tasks you can start</span>
                     </div>
                 </div>
             </div>
@@ -57,11 +78,40 @@
             </div>
         </div>
     </div>
+    <div id="taskTemplateProgress" class="col s6 m4" style="display: none;">
+        <div class="card blue lighten-3">
+            <div class="card-content white-text">
+                <span class="card-title content">{name}</span>
+                <p class="content">{description}</p>
+            </div>
+            <div class="card-action white">
+                <a target="_blank" class="content" href="#" data-treatment="">Doorgaan</a>
+            </div>
+        </div>
+    </div>
+    <div id="taskTemplateCompleted" class="col s6 m4" style="display: none;">
+        <div class="card grey darken-3">
+            <div class="card-content white-text">
+                <span class="card-title content">{name}</span>
+                <p class="content">{description}</p>
+            </div>
+            <div class="card-action white">
+                <a target="_blank" class="content" href="#" data-treatment="">Inzien</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="js/materialize.min.js"></script>
 <script src="js/index.js"></script>
 <script type="application/javascript">
+  let replaceKeywords = function (keywords, element) {
+    for (const key in keywords) {
+      if (keywords.hasOwnProperty(key)) {
+        element.innerText = element.innerText.replace(`{${key}}`, keywords[key]);
+      }
+    }
+  };
   window.onload = () => {
     const responseHandler = (response) => {
       if (response.status === 403) {
@@ -86,20 +136,60 @@
         treatmentElement.style.display = '';
         let elements = treatmentElement.querySelectorAll('.content');
         elements.forEach(element => {
-          for (const key in treatment) {
-            if (treatment.hasOwnProperty(key)) {
-                element.innerText = element.innerText.replace(`{${key}}`, treatment[key]);
-            }
-          }
+          replaceKeywords(treatment, element);
         });
         const treatmentId = treatment['id'];
         treatmentElement.querySelector('a').onclick = function () {
-          document.location = '/api/treatment/' + treatmentId;
+          let location = '/api/treatment/launch/' + treatmentId;
+          window.open(location, "_blank").focus();
           return false;
         };
 
         treatmentsElement.append(treatmentElement);
       })
+    });
+
+    fetch('solid/session?_=' + new Date().getTime()).then(responseHandler).then(data => {
+      if (data.loggedIn) {
+        document.querySelectorAll('.solid_connected').forEach((element, index, array) => {
+          element.style.display = '';
+          fetch('fhir/Task?_=' + +new Date().getTime()).then(responseHandler).then(data => {
+            let taskContainer = element;
+            data.entry.forEach(task => {
+              task = task.resource;
+
+              let reference = task.definitionReference.reference;
+              let treatmentId = reference.replace('ActivityDefinition/', '');
+              fetch('/api/treatment/' + treatmentId).then(responseHandler).then(treatment => {
+                let templateId = task.status === 'completed' ? '#taskTemplateCompleted' : '#taskTemplateProgress';
+                let taskElement = document.querySelector(templateId).cloneNode(true);
+                taskElement.removeAttribute('id');
+                taskElement.style.display = '';
+                let elements = taskElement.querySelectorAll('.content');
+                elements.forEach(element => {
+                  replaceKeywords(task, element);
+                  replaceKeywords(treatment, element);
+                });
+                const taskId = task['id'];
+                taskElement.querySelectorAll('a').forEach(el => {
+                  el.onclick = function () {
+                    let location = '/api/task/launch/' + taskId;
+                    window.open(location, "_blank").focus();
+                    return false;
+                  };
+                })
+                taskContainer.append(taskElement);
+              });
+            });
+
+          });
+        });
+      } else {
+        document.querySelectorAll('.solid_unconnected').forEach((element, index, array) => {
+          element.style.display = '';
+        });
+
+      }
     });
   }
 </script>
