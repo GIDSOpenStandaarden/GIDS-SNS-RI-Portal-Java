@@ -1,9 +1,11 @@
 FROM maven:3.6.3-jdk-11 AS build
 
+ADD GIDS-SNS-Solid-Client-Java /GIDS-SNS-Solid-Client-Java
 ADD pom.xml /pom.xml
 ADD src /src
 
-RUN mvn clean install pmd:pmd spotbugs:spotbugs
+RUN cd /GIDS-SNS-Solid-Client-Java ; mvn clean install
+RUN cd / ; mvn clean install pmd:pmd spotbugs:spotbugs
 
 FROM openjdk:11-jre
 

@@ -1,0 +1,3 @@
+[submodule "GIDS-SNS-Solid-Client-Java"]
+	path = GIDS-SNS-Solid-Client-Java
+	url = https://github.com/GIDSOpenStandaarden/GIDS-SNS-Solid-Client-Java.git
