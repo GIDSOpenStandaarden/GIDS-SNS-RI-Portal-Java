@@ -127,7 +127,7 @@
   <repositories>
     <repository>
       <id>gitlab-maven</id>
-      <url>https://gitlab.com/api/v4/groups/10298538/-/packages/maven</url>
+      <url>https://gitlab.com/api/v4/groups/9948337/-/packages/maven</url>
     </repository>
   </repositories>
 </project>
