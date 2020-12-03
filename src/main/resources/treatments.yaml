@@ -1,21 +1,32 @@
 treatments:
-  - id: nl.edia.emhi.kernel.model.diary.DiarySleepEntry
-    name: Slaap
-    description: "Hou een slaapdagboek bij."
-    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
-    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
-  - id: nl.edia.emhi.kernel.model.diary.DiaryEmotionEntry
-    name: Gevoel
-    description: "Hou een dagboek van je emoties bij."
-    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
-    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
-  - id: nl.edia.emhi.kernel.model.diary.DiaryRegistrationAlcoholEntry
-    name: Alcohol
-    description: "Hou je alcoholconsumtie in een dagboek bij."
-    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
-    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
   - id: 5ec38b0a0274390001fc7e0a
     name: Test Module
     description: "Joris' huidige testmodule"
     aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
     url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 57a1a35ce4b0fbb9edba2f5b
+    name: Cannabis & ik
+    description: Cannabis & ik, Geen e-coach
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 57a1a3c2e4b0fbb9edba2f5d
+    name: Cannabis & ik
+    description: Doelen
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 57a1a3f1e4b0fbb9edba2f61
+    name: Cannabis & ik
+    description: Beheers je gedachten
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 5825935be4b0849a4ff321d3
+    name: Alcohol & ik - u versie
+    description: Alcohol & ik - u versie
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+

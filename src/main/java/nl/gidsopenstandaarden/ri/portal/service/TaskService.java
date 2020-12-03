@@ -4,7 +4,7 @@ import nl.gidsopenstandaarden.ri.portal.entity.Task;
 import nl.gidsopenstandaarden.ri.portal.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  *
@@ -18,7 +18,13 @@ public class TaskService {
 	}
 
 	public Task getByDefinitionReferenceAndForUser(String treatmentReference, String userReference) {
-		return taskRepository.findTaskByDefinitionReferenceAndForUser(treatmentReference, userReference).orElse(null);
+		List<Task> list = taskRepository.findTasksByDefinitionReferenceAndForUser(treatmentReference, userReference);
+		if (list.size() == 0) {
+			return null;
+		} else if (list.size() == 1) {
+			return list.get(0);
+		}
+		throw new RuntimeException("Multiple results for getByDefinitionReferenceAndForUser");
 	}
 
 	public Task getTask(String identifier) {

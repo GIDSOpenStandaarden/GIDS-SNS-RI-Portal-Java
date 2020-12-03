@@ -25,7 +25,15 @@ public class Treatment implements Serializable, Comparable {
 	String name;
 	@Column(length = 2048)
 	String description;
+	boolean repeating;
 
+	@Override
+	public int compareTo(Object o) {
+		if (o instanceof Treatment) {
+			return new CompareToBuilder().append(name, ((Treatment)o).name).build();
+		}
+		return 0;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -38,21 +46,6 @@ public class Treatment implements Serializable, Comparable {
 		return new EqualsBuilder()
 				.append(name, treatment.name)
 				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37)
-				.append(name)
-				.toHashCode();
-	}
-
-	@Override
-	public int compareTo(Object o) {
-		if (o instanceof Treatment) {
-			return new CompareToBuilder().append(name, ((Treatment)o).name).build();
-		}
-		return 0;
 	}
 
 	public String getAud() {
@@ -89,5 +82,20 @@ public class Treatment implements Serializable, Comparable {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37)
+				.append(name)
+				.toHashCode();
+	}
+
+	public boolean isRepeating() {
+		return repeating;
+	}
+
+	public void setRepeating(boolean repeating) {
+		this.repeating = repeating;
 	}
 }
