@@ -7,7 +7,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
+  <properties>
+    <java.version>11</java.version>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+  </properties>
   <groupId>nl.gidsopenstandaarden</groupId>
   <artifactId>gids-sns-ri-portal-java</artifactId>
   <version>0.1.0</version>
@@ -17,12 +21,6 @@
     <version>2.3.0.RELEASE</version>
   </parent>
   <dependencies>
-    <dependency>
-      <groupId>org.gidsopenstandaarden</groupId>
-      <artifactId>gids-sns-solid-client-java</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-    </dependency>
-
     <dependency>
       <groupId>ca.uhn.hapi.fhir</groupId>
       <artifactId>org.hl7.fhir.dstu3</artifactId>
@@ -123,21 +121,4 @@
       </plugin>
     </plugins>
   </build>
-  <!-- GitLab stuff -->
-  <repositories>
-    <repository>
-      <id>gitlab-maven</id>
-      <url>${env.CI_SERVER_URL}/api/v4/groups/9948337/-/packages/maven</url>
-    </repository>
-  </repositories>
-  <distributionManagement>
-    <repository>
-      <id>gitlab-maven</id>
-      <url>${env.CI_SERVER_URL}/api/v4/projects/22867851/packages/maven</url>
-    </repository>
-    <snapshotRepository>
-      <id>gitlab-maven</id>
-      <url>${env.CI_SERVER_URL}/api/v4/projects/22867851/packages/maven</url>
-    </snapshotRepository>
-  </distributionManagement>
 </project>
