@@ -60,6 +60,7 @@ public class SolidFhirClient extends SolidPodClient {
 				status = Task.TaskStatus.COMPLETED.toCode();
 				break;
 			case "opened":
+			case "returned":
 				status = Task.TaskStatus.INPROGRESS.toCode();
 				break;
 			default:
