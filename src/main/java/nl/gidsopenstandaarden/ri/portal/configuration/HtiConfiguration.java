@@ -58,6 +58,12 @@ public class HtiConfiguration {
 			publicKey = KeyUtils.encodeKey(keyPair.getPublic());
 			privateKey = KeyUtils.encodeKey(keyPair.getPrivate());
 			LOG.info(String.format("Generated HTI keypair, public key is:%n%s", KeyUtils.encodeKeyPem(keyPair.getPublic(), "PUBLIC")));
+		} else {
+			LOG.info(String.format("Public key is:%n%s", KeyUtils.encodeKeyPem(publicKey, "PUBLIC")));
+		}
+
+		if (StringUtils.isNotEmpty(getIssuerOverride())) {
+			LOG.info(String.format("Issuer override is set to: %S", getIssuerOverride()));
 		}
 	}
 }
