@@ -94,6 +94,14 @@
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
     </dependency>
+
+    <!-- FROM gids-sns-solid-client-java -->
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>9.1.2</version>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>${project.name}</finalName>
