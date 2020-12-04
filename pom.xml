@@ -102,6 +102,12 @@
       <version>9.1.2</version>
     </dependency>
 
+    <!-- For GitLab Auto DevOps -->
+    <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>${project.name}</finalName>
