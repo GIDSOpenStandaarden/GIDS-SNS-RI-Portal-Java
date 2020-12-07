@@ -63,7 +63,7 @@ public class HtiConfiguration {
 		}
 
 		if (StringUtils.isNotEmpty(getIssuerOverride())) {
-			LOG.info(String.format("Issuer override is set to: %S", getIssuerOverride()));
+			LOG.info(String.format("Issuer override is set to: %s", getIssuerOverride()));
 		}
 	}
 }
