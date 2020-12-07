@@ -26,6 +26,7 @@ public class LogoutController {
 	@RequestMapping("/logout")
 	public View irmaAuth(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		session.removeAttribute("user");
+		session.removeAttribute("token");
 		removeCookie("jwt_token", request, response);
 		return new RedirectView("/");
 

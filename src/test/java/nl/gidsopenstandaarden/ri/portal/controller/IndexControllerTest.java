@@ -41,6 +41,6 @@ public class IndexControllerTest {
 	public void indexLogedin() throws Exception {
 		PortalUser user = portalUserService.getOrCreatePortalUser("sub1");
 		mockMvc.perform(get("/").sessionAttr("user", user))
-				.andExpect(redirectedUrl("index.html"));
+				.andExpect(redirectedUrl("patient.html"));
 	}
 }

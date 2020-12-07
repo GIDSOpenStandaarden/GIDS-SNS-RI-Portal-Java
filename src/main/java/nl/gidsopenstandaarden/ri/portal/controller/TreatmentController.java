@@ -8,11 +8,11 @@ import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.entity.Treatment;
 import nl.gidsopenstandaarden.ri.portal.exception.NotLoggedInException;
 import nl.gidsopenstandaarden.ri.portal.service.HtiLaunchService;
+import nl.gidsopenstandaarden.ri.portal.service.PortalUserService;
 import nl.gidsopenstandaarden.ri.portal.service.TreatmentService;
 import nl.gidsopenstandaarden.ri.portal.util.UrlUtils;
 import nl.gidsopenstandaarden.ri.portal.valueobject.LaunchValueObject;
 import org.jose4j.lang.JoseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,17 +28,14 @@ import java.util.List;
 @RequestMapping("/api/treatment")
 public class TreatmentController {
 
-	private TreatmentService treatmentService;
-	private HtiLaunchService htiLaunchService;
+	private final TreatmentService treatmentService;
+	private final HtiLaunchService htiLaunchService;
+	private final PortalUserService portalUserService;
 
-	@Autowired
-	public void setHtiLaunchService(HtiLaunchService htiLaunchService) {
-		this.htiLaunchService = htiLaunchService;
-	}
-
-	@Autowired
-	public void setTreatmentService(TreatmentService treatmentService) {
+	public TreatmentController(TreatmentService treatmentService, HtiLaunchService htiLaunchService, PortalUserService portalUserService) {
 		this.treatmentService = treatmentService;
+		this.htiLaunchService = htiLaunchService;
+		this.portalUserService = portalUserService;
 	}
 
 	@RequestMapping(value = "launch/{id}", produces = MediaType.TEXT_HTML_VALUE)
@@ -55,23 +52,14 @@ public class TreatmentController {
 				"<head>\n" +
 				"</head>\n" +
 				"<body onload=\"document.forms[0].submit();\">\n" +
-				"<form action=\""+ launchValueObject.getUrl()+"\" method=\"post\">\n" +
-				"<input type=\"hidden\" name=\"token\" value=\""+ launchValueObject.getToken()+"\"/>\n" +
+				"<form action=\"" + launchValueObject.getUrl() + "\" method=\"post\">\n" +
+				"<input type=\"hidden\" name=\"token\" value=\"" + launchValueObject.getToken() + "\"/>\n" +
 				"</form>\n" +
 				"</body>\n" +
 				"</html>";
 	}
 
-	@RequestMapping(value = "",method = RequestMethod.GET)
-	public List<Treatment> treatments(HttpSession session) {
-		PortalUser portalUser = (PortalUser) session.getAttribute("user");
-		if (portalUser == null) {
-			throw new NotLoggedInException("No active session found");
-		}
-		return treatmentService.getTreatmentsForUser(portalUser);
-	}
-
-	@RequestMapping(value = "{id}",method = RequestMethod.GET)
+	@RequestMapping(value = "{id}", method = RequestMethod.GET)
 	public Treatment treatment(HttpSession session, @PathVariable("id") String id) {
 		PortalUser portalUser = (PortalUser) session.getAttribute("user");
 		if (portalUser == null) {
@@ -85,6 +73,27 @@ public class TreatmentController {
 			treatment.setDescription("Maak een dagboek.");
 		}
 		return treatment;
+	}
+
+	@RequestMapping(value = "", method = RequestMethod.GET)
+	public List<Treatment> treatments(HttpSession session) {
+		PortalUser portalUser = (PortalUser) session.getAttribute("user");
+		if (portalUser == null) {
+			throw new NotLoggedInException("No active session found");
+		}
+		return treatmentService.getTreatmentsForUser(portalUser);
+	}
+
+	@RequestMapping(value = "/patient/{patientId}", method = RequestMethod.GET)
+	public List<Treatment> treatmentsForPatient(HttpSession session, @PathVariable("patientId") Long patientId) {
+		PortalUser portalUser = (PortalUser) session.getAttribute("user");
+		if (portalUser == null) {
+			throw new NotLoggedInException("No active session found");
+		}
+
+		PortalUser patient = portalUserService.getPortalUser(patientId);
+
+		return treatmentService.getTreatmentsForUser(patient);
 	}
 
 	public static class Treatments {

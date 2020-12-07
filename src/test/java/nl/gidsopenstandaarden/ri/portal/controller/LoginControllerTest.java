@@ -57,7 +57,7 @@ class LoginControllerTest {
 		mockMvc.perform(get("/irma-auth").session(session).param("token", jws.getCompactSerialization()))
 				.andExpect(redirectedUrl("/"));
 
-		mockMvc.perform(get("/").session(session)).andExpect(redirectedUrl("index.html"));
+		mockMvc.perform(get("/").session(session)).andExpect(redirectedUrl("patient.html"));
 	}
 
 	@Test

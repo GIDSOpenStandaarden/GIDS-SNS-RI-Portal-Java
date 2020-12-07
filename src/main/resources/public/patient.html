@@ -39,18 +39,27 @@
             </div>
         </div>
 
-        <div class="solid_unconnected row" style="display: none;">
+        <div class="row solid_unconnected" style="display: none;">
             <div class="col s12 m12">
-                <div class="card green lighten-2">
+                <div class="card purple lighten-2">
                     <div class="card-content white-text">
-                        <span class="card-title content">Your private resources</span>
+                        <span class="card-title content">My private resources</span>
                         <a href="/solid/auth?idp=https://solidcommunity.net">Connect your Solid POD</a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="solid_connected col s12 m12" style="display: none;">
+        <div class="row solid_connected" style="display: none;">
+            <div class="col s12 m12">
+                <div class="card purple lighten-2">
+                    <div class="card-content white-text">
+                        <span class="card-title content">My private resources</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row solid_connected" style="display: none;">
+            <div class="col s12 m12 task_container">
             </div>
         </div>
 
@@ -64,6 +73,17 @@
             </div>
         </div>
         <div class="row treatments">
+        </div>
+        <div class="row solid_enabled" style="display: none">
+            <div class="col s12 m12">
+                <div class="card teal lighten-2">
+                    <div class="card-content white-text">
+                        <span class="card-title content">Your caregivers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row caregivers solid_enabled" style="display: none">
         </div>
     </div>
 
@@ -79,7 +99,7 @@
         </div>
     </div>
     <div id="taskTemplateProgress" class="col s6 m4" style="display: none;">
-        <div class="card blue lighten-3">
+        <div class="card purple lighten-3">
             <div class="card-content white-text">
                 <span class="card-title content">{name}</span>
                 <p class="content">{description}</p>
@@ -100,25 +120,35 @@
             </div>
         </div>
     </div>
+    <div id="caregiverTemplateNoAccess" class="col s6 m4" style="display: none;">
+        <div class="card teal lighten-3">
+            <div class="card-content white-text">
+                <span class="card-title content">{subject}</span>
+                <p class="content truncate-overflow">{webId}</p>
+            </div>
+            <div class="card-action white">
+                <a class="content" href="#" data-caregiver="">Give access</a>
+            </div>
+        </div>
+    </div>
+    <div id="caregiverTemplateAccess" class="col s6 m4" style="display: none;">
+        <div class="card teal darken-3">
+            <div class="card-content white-text">
+                <span class="card-title content">{subject}</span>
+                <p class="content truncate-overflow">{webId}</p>
+            </div>
+            <div class="card-action white">
+                <a class="content" href="#" data-caregiver="">Revoke access</a>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script src="js/materialize.min.js"></script>
-<script src="js/index.js"></script>
+<script src="js/portal.js"></script>
 <script type="application/javascript">
-  let replaceKeywords = function (keywords, element) {
-    for (const key in keywords) {
-      if (keywords.hasOwnProperty(key)) {
-        element.innerText = element.innerText.replace(`{${key}}`, keywords[key]);
-      }
-    }
-  };
   window.onload = () => {
-    const responseHandler = (response) => {
-      if (response.status === 403) {
-        window.location = '/'
-      }
-      return response.json();
-    }
     fetch('/api/user?_=' + new Date().getTime())
       .then(responseHandler)
       .then(data => {
@@ -151,7 +181,7 @@
 
     fetch('solid/session?_=' + new Date().getTime()).then(responseHandler).then(data => {
       if (data.loggedIn) {
-        document.querySelectorAll('.solid_connected').forEach((element, index, array) => {
+        document.querySelectorAll('.task_container').forEach((element, index, array) => {
           element.style.display = '';
           fetch('fhir/Task?_=' + +new Date().getTime()).then(responseHandler).then(data => {
             let taskContainer = element;
@@ -184,6 +214,12 @@
 
           });
         });
+        document.querySelectorAll('.solid_connected').forEach(element => {
+          element.style.display = '';
+        });
+        document.querySelectorAll('.solid_enabled').forEach((element, index, array) => {
+          element.style.display = '';
+        });
       } else {
         document.querySelectorAll('.solid_unconnected').forEach((element, index, array) => {
           element.style.display = '';
@@ -191,6 +227,48 @@
 
       }
     });
+    const loadCaregivers = function () {
+      fetch('/api/user/caregivers?_=' + new Date().getTime()).then(responseHandler).then(data => {
+        let caregiversElement = document.querySelector(".caregivers");
+        caregiversElement.innerHTML = '';
+        data.forEach(caregiver => {
+          if (caregiver['webId']) {
+
+            const hasReadAccess = caregiver['hasReadAccess'];
+            const caregiverTemplate = (hasReadAccess ? document.querySelector('#caregiverTemplateAccess') : document.querySelector('#caregiverTemplateNoAccess')).cloneNode(true);
+            caregiverTemplate.removeAttribute('id');
+            caregiverTemplate.style.display = '';
+            let elements = caregiverTemplate.querySelectorAll('.content');
+            elements.forEach(element => {
+              replaceKeywords(caregiver, element);
+            });
+            caregiverTemplate.querySelector('a').onclick = function () {
+              const localCaregiver = caregiver;
+              if (hasReadAccess) {
+                deauthorizeCaregiver(localCaregiver);
+              } else {
+                authorizeCaregiver(localCaregiver);
+              }
+              return false;
+            };
+            caregiversElement.append(caregiverTemplate);
+
+          }
+        });
+        const authorizeCaregiver = function (caregiver) {
+          fetch('fhir/Task/authorize?webId=' + encodeURIComponent(caregiver['webId'])).then(responseHandler).then(data => {
+            loadCaregivers();
+          });
+        }
+        const deauthorizeCaregiver = function (caregiver) {
+          fetch('fhir/Task/deauthorize?webId=' + encodeURIComponent(caregiver['webId'])).then(responseHandler).then(data => {
+            loadCaregivers();
+          });
+        }
+
+      });
+    };
+    loadCaregivers();
   }
 </script>
 </body>

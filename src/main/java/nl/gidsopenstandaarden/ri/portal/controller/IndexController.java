@@ -4,6 +4,8 @@
 
 package nl.gidsopenstandaarden.ri.portal.controller;
 
+import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -21,7 +23,11 @@ public class IndexController {
 		if (!isLoggedIn(session)) {
 			return "redirect:login.html";
 		}
-		return "redirect:index.html";
+		PortalUser user = (PortalUser)session.getAttribute("user");
+		if (StringUtils.equals(user.getType(), "CareGiver"))
+			return "redirect:caregiver.html";
+
+		return "redirect:patient.html";
 	}
 
 	private boolean isLoggedIn(HttpSession session) {

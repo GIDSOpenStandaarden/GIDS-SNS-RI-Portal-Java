@@ -20,6 +20,7 @@ public class PortalUser implements Serializable {
 	private String identifier;
 	private String subject;
 	private String webId;
+	private String type;
 
 	public Long getId() {
 		return id;
@@ -27,10 +28,6 @@ public class PortalUser implements Serializable {
 
 	public String getIdentifier() {
 		return identifier;
-	}
-
-	public String getWebId() {
-		return webId;
 	}
 
 	public void setIdentifier(String identifier) {
@@ -43,6 +40,18 @@ public class PortalUser implements Serializable {
 
 	public void setSubject(String sub) {
 		this.subject = sub;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getWebId() {
+		return webId;
 	}
 
 	public void setWebId(String webId) {
