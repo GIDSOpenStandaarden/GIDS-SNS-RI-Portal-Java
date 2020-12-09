@@ -1,5 +1,6 @@
 package nl.gidsopenstandaarden.ri.portal.controller;
 
+import nl.gidsopenstandaarden.ri.portal.configuration.SolidFhirConfiguration;
 import nl.gidsopenstandaarden.ri.portal.entity.PortalUser;
 import nl.gidsopenstandaarden.ri.portal.service.PortalUserService;
 import org.gidsopenstandaarden.solid.client.*;
@@ -28,18 +29,22 @@ public class SolidAuthController {
 	private final SolidAuthClient solidAuthClient;
 	private final SolidPodClient solidPodClient;
 	private final PortalUserService portalUserService;
+	private final SolidFhirClient solidFhirClient;
+	private final SolidFhirConfiguration solidFhirConfiguration;
 
-	public SolidAuthController(SolidAuthClient solidAuthClient, SolidPodClient solidPodClient, PortalUserService portalUserService) {
+	public SolidAuthController(SolidAuthClient solidAuthClient, SolidPodClient solidPodClient, PortalUserService portalUserService, SolidFhirClient solidFhirClient, SolidFhirConfiguration solidFhirConfiguration) {
 		this.solidAuthClient = solidAuthClient;
 		this.solidPodClient = solidPodClient;
 		this.portalUserService = portalUserService;
+		this.solidFhirClient = solidFhirClient;
+		this.solidFhirConfiguration = solidFhirConfiguration;
 	}
 
 	@RequestMapping("/auth")
-	public View auth(String idp, HttpSession httpSession, HttpServletRequest request) throws IOException {
+	public View auth(HttpSession httpSession, HttpServletRequest request) throws IOException {
 		String redirectUrl = getRedirectUri(request);
 		final HashMap<String, Object> state = new HashMap<>();
-		URL authorizeUrl = solidAuthClient.authorize(idp, state, redirectUrl);
+		URL authorizeUrl = solidAuthClient.authorize(solidFhirConfiguration.getUrl(), state, redirectUrl);
 		httpSession.setAttribute("state", state);
 		return new RedirectView(authorizeUrl.toExternalForm());
 	}
