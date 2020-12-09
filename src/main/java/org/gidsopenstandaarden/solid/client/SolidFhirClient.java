@@ -22,11 +22,13 @@ public class SolidFhirClient extends SolidPodClient {
 		super(solidAuthClient, httpClientCreator);
 	}
 
-	public Task getTask(OAuth2Token token, String userReference, String id) throws IOException {
-		String subjectUrl = getBaseUrl(token.getIdToken(), "/fhir/Task/" + id);
-		Model model = getRdfRequest(token, subjectUrl, "GET", "text/turtle");
-		Resource subject = model.getResource(subjectUrl);
-		return buildTask(subject, model, userReference);
+	public void ensureSolidDirectories(OAuth2Token token) throws IOException {
+		String url = getBaseUrl(token.getIdToken(), "/fhir/Task/");
+		Model model = getRdfRequest(token, url, "GET");
+		if (model.isEmpty()) {
+			putFile(token, "/fhir/.dummy", "", "text/plain", "UTF-8");
+			putFile(token, "/fhir/Task/.dummy", "", "text/plain", "UTF-8");
+		}
 	}
 
 	public Task getOtherPersonsTask(OAuth2Token token, String webId, String userReference, String id) throws IOException {
@@ -36,9 +38,16 @@ public class SolidFhirClient extends SolidPodClient {
 		return buildTask(subject, model, userReference);
 	}
 
-	public List<Task> listTasks(OAuth2Token token, String userReference) throws IOException {
+	public Task getTask(OAuth2Token token, String userReference, String id) throws IOException {
+		String subjectUrl = getBaseUrl(token.getIdToken(), "/fhir/Task/" + id);
+		Model model = getRdfRequest(token, subjectUrl, "GET", "text/turtle");
+		Resource subject = model.getResource(subjectUrl);
+		return buildTask(subject, model, userReference);
+	}
+
+	public List<Task> listOtherPersonsTasks(OAuth2Token token, String webId, String userReference) throws IOException {
 		List<Task> rv = new ArrayList<>();
-		String url = getBaseUrl(token.getIdToken(), "/fhir/Task/");
+		String url = UrlUtils.getBaseUrl(webId, "/fhir/Task/");
 		Model model = getRdfRequest(token, url, "GET", "text/turtle");
 
 		for (Resource subject : model.listSubjectsWithProperty(PROPERTY_TYPE, TYPE_RESOURCE).toList()) {
@@ -49,9 +58,9 @@ public class SolidFhirClient extends SolidPodClient {
 		return rv;
 	}
 
-	public List<Task> listOtherPersonsTasks(OAuth2Token token, String webId, String userReference) throws IOException {
+	public List<Task> listTasks(OAuth2Token token, String userReference) throws IOException {
 		List<Task> rv = new ArrayList<>();
-		String url = UrlUtils.getBaseUrl(webId, "/fhir/Task/");
+		String url = getBaseUrl(token.getIdToken(), "/fhir/Task/");
 		Model model = getRdfRequest(token, url, "GET", "text/turtle");
 
 		for (Resource subject : model.listSubjectsWithProperty(PROPERTY_TYPE, TYPE_RESOURCE).toList()) {

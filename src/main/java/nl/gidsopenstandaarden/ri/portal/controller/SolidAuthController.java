@@ -73,6 +73,7 @@ public class SolidAuthController {
 			portalUserService.updateWebId(user, solidPodClient.getWebId(token));
 		}
 		session.setAttribute("token", token);
+		solidFhirClient.ensureSolidDirectories(token);
 		return "redirect:/";
 	}
 

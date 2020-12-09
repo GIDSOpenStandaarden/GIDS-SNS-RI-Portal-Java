@@ -33,6 +33,8 @@ public class SolidPodClient {
 	public static final Resource RESOURCE_AUTHOROZATIOPN = ResourceFactory.createResource("http://www.w3.org/ns/auth/acl#Authorization");
 	public static final Property PROPERTY_MODE = ResourceFactory.createProperty("http://www.w3.org/ns/auth/acl#mode");
 	public static final Resource RESOURCE_READ = ResourceFactory.createResource("http://www.w3.org/ns/auth/acl#Read");
+	public static final Resource RESOURCE_WRITE = ResourceFactory.createResource("http://www.w3.org/ns/auth/acl#Write");
+	public static final Resource RESOURCE_CONTROL = ResourceFactory.createResource("http://www.w3.org/ns/auth/acl#Control");
 	public static final Property PROPERTY_AGRENT = ResourceFactory.createProperty("http://www.w3.org/ns/auth/acl#agent");
 	public static final Property PROPERTY_DEFAULT = ResourceFactory.createProperty("http://www.w3.org/ns/auth/acl#default");
 	public static final Property PROPERTY_ACCESSTO = ResourceFactory.createProperty("http://www.w3.org/ns/auth/acl#accessTo");
@@ -73,17 +75,54 @@ public class SolidPodClient {
 				readAccessSubject.addProperty(PROPERTY_AGRENT, webIdResource);
 			}
 		} else {
-			Resource aclResource = ResourceFactory.createResource(resourceUrl + "/.acl#Read");
-			aclResource.addProperty(PROPERTY_AGRENT, webIdResource);
-			aclResource.addProperty(PROPERTY_DEFAULT, resourceUrl);
-			aclResource.addProperty(PROPERTY_ACCESSTO, resourceUrl);
-			aclResource.addProperty(PROPERTY_MODE, RESOURCE_READ);
-			Statement aclStatement = ResourceFactory.createStatement(aclResource, PROPERTY_TYPE, RESOURCE_AUTHOROZATIOPN);
-			model.add(aclStatement);
+
+			// The read ACL
+			{
+				Resource aclResource = model.createResource(resourceUrl + ".acl#Read");
+				aclResource.addProperty(PROPERTY_AGRENT, webIdResource);
+				try {
+					aclResource.addProperty(PROPERTY_AGRENT, ResourceFactory.createResource(getSubject(token.getIdToken())));
+				} catch (ParseException e) {
+					throw new IOException(e);
+				}
+				aclResource.addProperty(PROPERTY_DEFAULT, ResourceFactory.createResource(resourceUrl));
+				aclResource.addProperty(PROPERTY_ACCESSTO, ResourceFactory.createResource(resourceUrl));
+				aclResource.addProperty(PROPERTY_MODE, RESOURCE_READ);
+				Statement aclStatement = ResourceFactory.createStatement(aclResource, PROPERTY_TYPE, RESOURCE_AUTHOROZATIOPN);
+				model.add(aclStatement);
+			}
+			// The owner ACL
+			{
+				Resource aclResource = model.createResource(resourceUrl + ".acl#owner");
+				try {
+					aclResource.addProperty(PROPERTY_AGRENT, ResourceFactory.createResource(getSubject(token.getIdToken())));
+				} catch (ParseException e) {
+					throw new IOException(e);
+				}
+				aclResource.addProperty(PROPERTY_DEFAULT, ResourceFactory.createResource(resourceUrl));
+				aclResource.addProperty(PROPERTY_ACCESSTO, ResourceFactory.createResource(resourceUrl));
+				aclResource.addProperty(PROPERTY_MODE, RESOURCE_READ);
+				aclResource.addProperty(PROPERTY_MODE, RESOURCE_WRITE);
+				aclResource.addProperty(PROPERTY_MODE, RESOURCE_CONTROL);
+				Statement aclStatement = ResourceFactory.createStatement(aclResource, PROPERTY_TYPE, RESOURCE_AUTHOROZATIOPN);
+				model.add(aclStatement);
+			}
+
+
 			modified = true;
 		}
 		if (modified)
 			putModel(token, model);
+	}
+
+	public boolean canReadPodOf(OAuth2Token token, String webId) throws IOException {
+		String url = UrlUtils.getBaseUrl(webId, "/fhir/Task/");
+		try {
+			getRdfRequest(token, url, "GET");
+			return true;
+		} catch (AccessDeniedException e) {
+			return false;
+		}
 	}
 
 	public Resource findReadAccessSubject(Model model) {
@@ -124,14 +163,15 @@ public class SolidPodClient {
 		return getSubject(token.getIdToken());
 	}
 
-	public boolean canReadPodOf(OAuth2Token token, String webId) throws IOException {
-		String url = UrlUtils.getBaseUrl(webId, "/fhir/Task/");
-		try {
-			getRdfRequest(token, url, "GET");
-			return true;
-		} catch (AccessDeniedException e) {
-			return false;
+	public boolean hasReadAcl(OAuth2Token token, String webId) throws IOException {
+		Resource webIdResource = ResourceFactory.createResource(webId);
+		String url = getBaseUrl(token.getIdToken(), "/fhir/Task/.acl");
+		Model model = getRdfRequest(token, url, "GET");
+		Resource readAccessSubject = findReadAccessSubject(model);
+		if (readAccessSubject != null) {
+			return readAccessSubject.hasProperty(PROPERTY_AGRENT, webIdResource);
 		}
+		return false;
 	}
 
 	public Map<String, Object> listFiles(OAuth2Token token, String path) throws IOException {
@@ -203,17 +243,6 @@ public class SolidPodClient {
 			putModel(token, model);
 	}
 
-	public boolean hasReadAcl(OAuth2Token token, String webId) throws IOException {
-		Resource webIdResource = ResourceFactory.createResource(webId);
-		String url = getBaseUrl(token.getIdToken(), "/fhir/Task/.acl");
-		Model model = getRdfRequest(token, url, "GET");
-		Resource readAccessSubject = findReadAccessSubject(model);
-		if (readAccessSubject != null) {
-			return readAccessSubject.hasProperty(PROPERTY_AGRENT, webIdResource);
-		}
-		return false;
-	}
-
 	private String getLocalName(Resource item) {
 		String uri = item.getURI();
 		if (StringUtils.endsWith(uri, "/")) {
@@ -245,8 +274,10 @@ public class SolidPodClient {
 				if (statusCode == 200) {
 					final String content = EntityUtils.toString(entity, StandardCharsets.UTF_8);
 					return model.read(new StringReader(content), url, CONTENT_TYPE_MAP_RDF.get(contentType));
-				} else if (statusCode == 403) {
+				} else if (statusCode == 403 || statusCode == 401) {
 					throw new AccessDeniedException(String.format("Cannot access recource %s", url));
+				} else if (statusCode == 404) {
+					return model; // Return an empty model
 				} else {
 					throw new IOException(String.format("Unexpected return code %s", statusCode));
 				}

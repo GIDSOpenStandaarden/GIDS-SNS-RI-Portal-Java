@@ -17,9 +17,11 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -175,8 +177,8 @@ public class SolidAuthClient {
 		HttpEntity requestEntity = new UrlEncodedFormEntity(params);
 		httpPost.setEntity(requestEntity);
 		try (CloseableHttpResponse response = client.execute(httpPost)) {
-			final HttpEntity entity = response.getEntity();
-			return objectMapper.readValue(entity.getContent(), cls);
+			final String content = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+			return objectMapper.readValue(content, cls);
 		}
 	}
 
@@ -190,8 +192,8 @@ public class SolidAuthClient {
 		requestEntity.setContentType("application/json");
 		httpPost.setEntity(requestEntity);
 		try (CloseableHttpResponse response = client.execute(httpPost)) {
-			final HttpEntity entity = response.getEntity();
-			return objectMapper.readValue(entity.getContent(), Map.class);
+			final String content = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+			return objectMapper.readValue(content, Map.class);
 		}
 
 
