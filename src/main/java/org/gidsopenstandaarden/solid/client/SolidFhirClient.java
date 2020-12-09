@@ -1,8 +1,6 @@
 package org.gidsopenstandaarden.solid.client;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.*;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.Task;
 import org.springframework.stereotype.Service;
@@ -64,8 +62,10 @@ public class SolidFhirClient extends SolidPodClient {
 		Model model = getRdfRequest(token, url, "GET", "text/turtle");
 
 		for (Resource subject : model.listSubjectsWithProperty(PROPERTY_TYPE, TYPE_RESOURCE).toList()) {
-			Model subjectModel = getRdfRequest(token, subject.getURI(), "GET", "text/turtle");
-			rv.add(buildTask(subject, subjectModel, userReference));
+			if (subject.hasProperty(PROPERTY_TYPE, ResourceFactory.createResource("http://www.w3.org/ns/iana/media-types/text/turtle#Resource"))) {
+				Model subjectModel = getRdfRequest(token, subject.getURI(), "GET", "text/turtle");
+				rv.add(buildTask(subject, subjectModel, userReference));
+			}
 		}
 
 		return rv;
