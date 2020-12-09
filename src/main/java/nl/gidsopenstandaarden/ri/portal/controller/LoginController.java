@@ -72,6 +72,8 @@ public class LoginController {
 	@RequestMapping("/login/{type}")
 	public View loginLoginSrv(@PathVariable(value = "type", required = false) String type, HttpServletRequest request, RedirectAttributes redirectAttributes) {
 		type = StringUtils.defaultString(type, "simple");
+
+		redirectAttributes.addAttribute("redirect_uri", UrlUtils.getServerUrl("/loginsrv-auth", request));
 		return new RedirectView(loginSrvConfiguration.getServerUrl() + "/" + type);
 	}
 
