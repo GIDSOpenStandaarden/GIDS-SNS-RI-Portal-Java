@@ -191,7 +191,7 @@
       patientInfoElement.append(patientInfoTemplate);
       patientInfoElement.style.display = '';
 
-      fetch('/fhir/Task/patient/' + patient['id'])
+      fetch('/fhir/Task/patient/' + patient['id'] + '?_=' + new Date().getTime())
         .then(responseHandler)
         .then(data => {
           const taskContainer = document.querySelector(".tasks")

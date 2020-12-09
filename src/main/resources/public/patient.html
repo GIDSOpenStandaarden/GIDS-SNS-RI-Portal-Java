@@ -256,12 +256,12 @@
           }
         });
         const authorizeCaregiver = function (caregiver) {
-          fetch('fhir/Task/authorize?webId=' + encodeURIComponent(caregiver['webId'])).then(responseHandler).then(data => {
+          fetch('fhir/Task/authorize?webId=' + encodeURIComponent(caregiver['webId']) + '&_=' + new Date().getTime()).then(responseHandler).then(data => {
             loadCaregivers();
           });
         }
         const deauthorizeCaregiver = function (caregiver) {
-          fetch('fhir/Task/deauthorize?webId=' + encodeURIComponent(caregiver['webId'])).then(responseHandler).then(data => {
+          fetch('fhir/Task/deauthorize?webId=' + encodeURIComponent(caregiver['webId']) + '&_=' + new Date().getTime()).then(responseHandler).then(data => {
             loadCaregivers();
           });
         }
