@@ -6,7 +6,6 @@ import nl.gidsopenstandaarden.ri.portal.service.PortalUserService;
 import org.gidsopenstandaarden.solid.client.*;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.View;
@@ -44,7 +43,7 @@ public class SolidAuthController {
 	public View auth(HttpSession httpSession, HttpServletRequest request) throws IOException {
 		String redirectUrl = getRedirectUri(request);
 		final HashMap<String, Object> state = new HashMap<>();
-		URL authorizeUrl = solidAuthClient.authorize(solidFhirConfiguration.getUrl(), state, redirectUrl);
+		URL authorizeUrl = solidAuthClient.authorize(solidFhirConfiguration.getIdp(), state, redirectUrl);
 		httpSession.setAttribute("state", state);
 		return new RedirectView(authorizeUrl.toExternalForm());
 	}

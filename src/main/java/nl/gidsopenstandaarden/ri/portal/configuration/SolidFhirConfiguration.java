@@ -18,19 +18,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "solid.pod")
 public class SolidFhirConfiguration {
-	private String url;
+	String idp;
 
 	@Bean
 	public FhirContext fhirContext(){
 		return FhirContext.forDstu3();
 	}
 
-	public String getUrl() {
-		return url;
+	public String getIdp() {
+		return idp;
 	}
 
-	public void setUrl(String url) {
-		this.url = url;
+	public void setIdp(String idp) {
+		this.idp = idp;
 	}
 
 	@Bean
