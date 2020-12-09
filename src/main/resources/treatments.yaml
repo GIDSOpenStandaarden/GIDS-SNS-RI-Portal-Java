@@ -5,28 +5,87 @@ treatments:
     aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
     url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
     repeating: true
-  - id: 57a1a35ce4b0fbb9edba2f5b
+  - id: 58297b77e4b0849a4ff328ac
     name: Cannabis & ik
-    description: Cannabis & ik, Geen e-coach
+    description: Welkom
     aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
     url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
     repeating: true
-  - id: 57a1a3c2e4b0fbb9edba2f5d
+  - id: 58297ba7e4b0849a4ff328b2
     name: Cannabis & ik
-    description: Doelen
+    description: Start met uw dagboek
     aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
     url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
     repeating: true
-  - id: 57a1a3f1e4b0fbb9edba2f61
+  - id: 58297ba7e4b0849a4ff328b2
+    name: Cannabis & ik
+    description: Wat wilt u anders?
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 58297c2fe4b0849a4ff328b8
+    name: Cannabis & ik
+    description: Uw doel halen
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 58297c48e4b0849a4ff328bb
+    name: Cannabis & ik
+    description: Gevoel en gedachten
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 58297c65e4b0849a4ff328bd
+    name: Cannabis & ik
+    description: Onthouding
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 58297c81e4b0849a4ff328bf
+    name: Cannabis & ik
+    description: Trek
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 58297ccfe4b0849a4ff328c3
+    name: Cannabis & ik
+    description: Slapen
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 58297d12e4b0849a4ff328c6
+    name: Cannabis & ik
+    description: Afspraken met mijzelf
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 58297d2ce4b0849a4ff328c9
+    name: Cannabis & ik
+    description: Afronding
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 5829859be4b0849a4ff3295a
+    name: Cannabis & ik
+    description: Afspraken met mijzelf
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 582985bfe4b0849a4ff3295c
+    name: Cannabis & ik
+    description: Tips bij stoppen of minderen
+    aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
+    url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
+    repeating: true
+  - id: 58298638e4b0849a4ff32960
     name: Cannabis & ik
     description: Beheers je gedachten
     aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
     url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
     repeating: true
-  - id: 5825935be4b0849a4ff321d3
-    name: Alcohol & ik - u versie
-    description: Alcohol & ik - u versie
+  - id: 58298658e4b0849a4ff32962
+    name: Cannabis & ik
+    description: Beheers je gedachten
     aud: antes-builder-samenbeter-middelland.acc-5.edia.nl
     url: https://antes-builder-samenbeter-middelland.acc-5.edia.nl/hti-launch
     repeating: true
-
