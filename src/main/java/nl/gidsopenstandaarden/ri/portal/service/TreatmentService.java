@@ -94,7 +94,7 @@ public class TreatmentService {
 	private void updateTreatment(Treatment treatment) throws MalformedURLException {
 		Treatment original = treatmentRepository.findById(treatment.getId()).orElse(treatment);
 		if (StringUtils.isEmpty(treatment.getAud())) {
-			original.setAud(UrlUtils.getServerUrl("", new URL(treatmentsConfiguration.getLaunchUrl())));
+			original.setAud(UrlUtils.getServerHost("", new URL(treatmentsConfiguration.getLaunchUrl())));
 		} else {
 			original.setAud(treatment.getAud());
 		}

@@ -37,6 +37,11 @@ public class UrlUtils {
 	}
 
 	@NotNull
+	public static String getServerHost(String path, URL url) {
+		return url.getHost();
+	}
+
+	@NotNull
 	private static String getServerUrl(String path, int serverPort, String scheme, String serverName) {
 		if (isDefault(scheme, serverPort)) {
 			return scheme + "://" + serverName + path;
