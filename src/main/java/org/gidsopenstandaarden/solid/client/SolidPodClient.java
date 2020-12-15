@@ -120,7 +120,7 @@ public class SolidPodClient {
 		try {
 			getRdfRequest(token, url, "GET");
 			return true;
-		} catch (AccessDeniedException e) {
+		} catch (Throwable e) {
 			return false;
 		}
 	}
